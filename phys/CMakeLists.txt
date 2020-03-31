@@ -144,6 +144,7 @@ add_library(phys STATIC
 	module_sf_bep.F
 	module_sf_bep_bem.F
 	module_sf_bem.F
+	module_sf_teb.F
 	module_sf_pxlsm.F
 	module_sf_pxlsm_data.F
 	module_sf_ruclsm.F
@@ -217,6 +218,7 @@ target_link_libraries(phys
 	${NETCDF_F77_LIBRARIES}
 	frame
 	share
+	teb
 )
 
 target_include_directories(phys

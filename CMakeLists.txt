@@ -324,6 +324,8 @@ add_definitions(
     -DWRF_USE_CLM
     -DLANDREAD_STUB=1
 
+    -DWRF_TEB
+
     # See Transpose() subroutine in external/io_netcdf/wrf_io.F90.
     -DNO_M4
 )
