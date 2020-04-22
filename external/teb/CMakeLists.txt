@@ -24,6 +24,7 @@ ExternalProject_Add(teb-project
         -DCMAKE_Fortran_FLAGS_DEBUG=${CMAKE_Fortran_FLAGS_DEBUG}
         -DCMAKE_Fortran_FLAGS_RELEASE=${CMAKE_Fortran_FLAGS_RELEASE}
         -DCMAKE_Fortran_FLAGS=${CMAKE_Fortran_FLAGS}
+        -DBUILD_SHARED_LIBS=ON
         -DUSE_REAL8=OFF
 )
 
@@ -32,4 +33,4 @@ ExternalProject_Get_Property(teb-project binary_dir)
 add_library(teb INTERFACE)
 add_dependencies(teb teb-project)
 target_include_directories(teb INTERFACE ${binary_dir}/mod)
-target_link_libraries(teb INTERFACE ${binary_dir}/${CMAKE_STATIC_LIBRARY_PREFIX}teb${CMAKE_STATIC_LIBRARY_SUFFIX})
+target_link_libraries(teb INTERFACE ${binary_dir}/${CMAKE_SHARED_LIBRARY_PREFIX}teb${CMAKE_SHARED_LIBRARY_SUFFIX})
