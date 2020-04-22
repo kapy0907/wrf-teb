@@ -24,8 +24,8 @@ ExternalProject_Add(teb-project
         -DCMAKE_Fortran_FLAGS_DEBUG=${CMAKE_Fortran_FLAGS_DEBUG}
         -DCMAKE_Fortran_FLAGS_RELEASE=${CMAKE_Fortran_FLAGS_RELEASE}
         -DCMAKE_Fortran_FLAGS=${CMAKE_Fortran_FLAGS}
+        -DUSE_REAL8=${USE_REAL8}
         -DBUILD_SHARED_LIBS=ON
-        -DUSE_REAL8=OFF
 )
 
 ExternalProject_Get_Property(teb-project binary_dir)
