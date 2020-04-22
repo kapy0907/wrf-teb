@@ -451,6 +451,10 @@ set(CMAKE_EXECUTABLE_SUFFIX .exe)
 # The folder below the INSTALL_PREFIX that contains the executables.
 set(BIN_INSTALL_DIR main)
 
+# TEB is built within this project and installed in lib/,
+# therefore set lib/ as search path for shared libraries.
+set(CMAKE_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib)
+
 ###########################
 # Walk the subdirectories #
 ###########################
