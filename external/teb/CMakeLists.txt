@@ -11,7 +11,7 @@ if (DEFINED TEB_DIR)
 else()
     set(dir_options
         GIT_REPOSITORY https://github.com/teb-model/teb
-        GIT_TAG origin/master
+        GIT_TAG 4.0.1
         )
 endif()
 
