@@ -1,5 +1,5 @@
 <!-- omit in toc -->
-# WRF-TEB
+# WRF-TEB software
 
 WRF-TEB ([Meyer et al., 2020a](https://doi.org/10.1029/2019MS001961)) couples the single layer Town Energy Balance (TEB) model ([Masson, 2000](https://doi.org/10.1023/A:1002463829265), and subsequent papers) model, software ([Meyer et al., 2020b](https://doi.org/10.21105/joss.02008)), to the Weather Research and Forecasting (WRF; [Skamarock et al., 2019](https://doi.org/10.5065/1dfh-6p97)). The WRF-TEB software is available for download from version 4.1.5 at https://github.com/teb-model/wrf-teb.
 
@@ -38,9 +38,9 @@ Standard/general [WRF documentation](https://www2.mmm.ucar.edu/wrf/users/docs/us
 
 When using WRF-TEB, please cite the paper and software (with version) as follow:
 
-| Model                                                       | Software and Version*             |
-| ----------------------------------------------------------- | --------------------------------- |
-| [Meyer et al., 2020a](https://doi.org/10.1029/2019MS001961) | [see Zenodo](https://zenodo.org/) |
+| Model                                                       | Software and Version*                                |
+| ----------------------------------------------------------- | ---------------------------------------------------- |
+| [Meyer et al., 2020a](https://doi.org/10.1029/2019MS001961) | [see Zenodo](https://doi.org/10.5281/zenodo.3898327) |
 
 The corresponding reference list should be as follows:
 
