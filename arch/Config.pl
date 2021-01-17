@@ -894,6 +894,18 @@ while ( <ARCH_PREAMBLE> )
         $_ =~ s:CONFIGURE_GRIB2_LIB::g ;
       }
 
+    if ( $sw_teblib_path && $sw_tebinc_path ) 
+      {
+        $_ =~ s:CONFIGURE_TEB_FLAG:-DWRF_TEB:g ;
+        $_ =~ s:CONFIGURE_TEB_INC:-I$sw_tebinc_path:g ;
+        $_ =~ s:CONFIGURE_TEB_LIB:-L$sw_teblib_path -lteb:g ;
+      }
+    else                   
+      { $_ =~ s:CONFIGURE_TEB_FLAG::g ;
+        $_ =~ s:CONFIGURE_TEB_INC::g ;
+        $_ =~ s:CONFIGURE_TEB_LIB::g ;
+      }
+
   if ( $sw_gpfs_path ne "" )
     { if (/^GPFS.*=/)
         { $_  =~ s/\r|\n//g;

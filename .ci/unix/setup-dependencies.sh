@@ -16,7 +16,7 @@ if [ "$(uname)" == "Linux" ]; then
     if [ "$(lsb_release -i -s)" == "Ubuntu" ]; then
         echo "APT::Acquire::Retries \"${HTTP_RETRIES}\";" | sudo tee /etc/apt/apt.conf.d/80-retries
         sudo apt-get update
-        sudo apt-get install -y software-properties-common curl unzip
+        sudo apt-get install -y software-properties-common curl unzip git
     elif [ "$(lsb_release -i -s)" == "CentOS" ]; then
         sudo yum install -y unzip
     fi
