@@ -11,7 +11,8 @@ if (DEFINED TEB_DIR)
 else()
     set(dir_options
         GIT_REPOSITORY https://github.com/teb-model/teb
-        GIT_TAG 4.0.1
+        # TODO revert to tag after new release is out (need ninja fix)
+        GIT_TAG ninja-patch # 4.0.1
         )
 endif()
 
@@ -26,6 +27,7 @@ ExternalProject_Add(teb-project
         -DCMAKE_Fortran_FLAGS=${CMAKE_Fortran_FLAGS}
         -DUSE_REAL8=${USE_REAL8}
         -DBUILD_SHARED_LIBS=ON
+    BUILD_BYPRODUCTS <BINARY_DIR>/${CMAKE_SHARED_LIBRARY_PREFIX}teb${CMAKE_SHARED_LIBRARY_SUFFIX}
 )
 
 ExternalProject_Get_Property(teb-project binary_dir)

@@ -1,4 +1,13 @@
 MODULE module_sf_urban
+#if defined(mpas)
+use mpas_atmphys_utilities, only: physics_message,physics_error_fatal
+#define FATAL_ERROR(M) call physics_error_fatal( M )
+#define WRITE_MESSAGE(M) call physics_message( M )
+#else
+use module_wrf_error
+#define FATAL_ERROR(M) call wrf_error_fatal( M )
+#define WRITE_MESSAGE(M) call wrf_message( M )
+#endif
 
 !===============================================================================
 !     Single-Layer Urban Canopy Model for WRF Noah-LSM
@@ -240,7 +249,7 @@ MODULE module_sf_urban
      INTEGER,          INTENT(IN) :: x
      CHARACTER(LEN=*), INTENT(IN) :: name
      if (x == UNINIT_INT) then
-       CALL wrf_error_fatal('URBPARM.TBL: "'//name//'" uninitialized')
+       FATAL_ERROR('URBPARM.TBL: "'//name//'" uninitialized')
      end if 
     END SUBROUTINE
 
@@ -251,7 +260,7 @@ MODULE module_sf_urban
      INTEGER :: i
      do i = 1, size(x)
       if (x(i) == UNINIT_INT) then
-         CALL wrf_error_fatal('URBPARM.TBL: "'//name//'" uninitialized')
+         FATAL_ERROR('URBPARM.TBL: "'//name//'" uninitialized')
       end if
      enddo
     END SUBROUTINE
@@ -261,7 +270,7 @@ MODULE module_sf_urban
      REAL,             INTENT(IN) :: x
      CHARACTER(LEN=*), INTENT(IN) :: name
      if (x == UNINIT_REAL) then
-       CALL wrf_error_fatal('URBPARM.TBL: "'//name//'" uninitialized')
+       FATAL_ERROR('URBPARM.TBL: "'//name//'" uninitialized')
      end if 
    END SUBROUTINE
 
@@ -272,7 +281,7 @@ MODULE module_sf_urban
      INTEGER :: i
      do i = 1, size(x)
        if (x(i) == UNINIT_REAL) then
-         CALL wrf_error_fatal('URBPARM.TBL: "'//name//'" uninitialized')
+         FATAL_ERROR('URBPARM.TBL: "'//name//'" uninitialized')
        end if 
      enddo
    END SUBROUTINE
@@ -282,7 +291,7 @@ MODULE module_sf_urban
      CHARACTER(LEN=*), INTENT(IN) :: x
      CHARACTER(LEN=*), INTENT(IN) :: name
      if (x == repeat(UNINIT_CHAR, len(x))) then
-       CALL wrf_error_fatal('URBPARM.TBL: "'//name//'" uninitialized')
+       FATAL_ERROR('URBPARM.TBL: "'//name//'" uninitialized')
      end if 
    END SUBROUTINE
 
@@ -293,7 +302,7 @@ MODULE module_sf_urban
      INTEGER :: i
      do i = 1, size(x)
        if (x(i) == repeat(UNINIT_CHAR, len(x(i)))) then
-         CALL wrf_error_fatal('URBPARM.TBL: "'//name//'" uninitialized')
+         FATAL_ERROR('URBPARM.TBL: "'//name//'" uninitialized')
        end if 
      enddo
    END SUBROUTINE
@@ -303,7 +312,7 @@ MODULE module_sf_urban
      LOGICAL,          INTENT(IN) :: x
      CHARACTER(LEN=*), INTENT(IN) :: name
      if (.not. x) then
-       CALL wrf_error_fatal('URBPARM.TBL: "'//name//'" uninitialized')
+       FATAL_ERROR('URBPARM.TBL: "'//name//'" uninitialized')
      end if 
     END SUBROUTINE
 
@@ -833,48 +842,48 @@ MODULE module_sf_urban
 
  if(mh_urb.gt.0.0)THEN 
   !write(mesg,*) 'Mean Height NUDAPT',mh_urb
-  !call wrf_message(mesg)
+  !WRITE_MESSAGE(mesg)
   !write(mesg,*) 'Mean Height Table',ZR
-  !call wrf_message(mesg)
+  !WRITE_MESSAGE(mesg)
   if(zo_check.eq.1)THEN
    write(mesg,*) 'Mean Height NUDAPT',mh_urb
-   call wrf_message(mesg)
+   WRITE_MESSAGE(mesg)
    write(mesg,*) 'Mean Height Table',ZR
-   call wrf_message(mesg)
+   WRITE_MESSAGE(mesg)
    write(mesg,*) 'Roughness Length Table',Z0C
-   call wrf_message(mesg)
+   WRITE_MESSAGE(mesg)
    write(mesg,*) 'Roof Roughness Length Table',Z0R
-   call wrf_message(mesg)
+   WRITE_MESSAGE(mesg)
    write(mesg,*) 'Sky View Factor Table',SVF
-   call wrf_message(mesg)
+   WRITE_MESSAGE(mesg)
    write(mesg,*) 'Normalized Height Table',HGT
-   call wrf_message(mesg)
+   WRITE_MESSAGE(mesg)
    write(mesg,*) 'Plan Area Fraction', lp_urb
-   call wrf_message(mesg)
+   WRITE_MESSAGE(mesg)
    write(mesg,*) 'Plan Area Fraction table', R
-   call wrf_message(mesg)
+   WRITE_MESSAGE(mesg)
   end if
   !write(mesg,*) 'Area Weighted Mean Height',hgt_urb
-  !call wrf_message(mesg)
+  !WRITE_MESSAGE(mesg)
   !write(mesg,*) 'Plan Area Fraction', lp_urb
-  !call wrf_message(mesg)
+  !WRITE_MESSAGE(mesg)
   !write(mesg,*) 'STD Height', stdh_urb
-  !call wrf_message(mesg)
+  !WRITE_MESSAGE(mesg)
   !write(mesg,*) 'Frontal Area Index',lf_urb
-  !call wrf_message(mesg)
+  !WRITE_MESSAGE(mesg)
   !write(mesg,*) 'Urban Fraction',frc_urb
-  !call wrf_message(mesg)
+  !WRITE_MESSAGE(mesg)
   !write(mesg,*) 'Building Surf Ratio',lb_urb
-  !call wrf_message(mesg)
+  !WRITE_MESSAGE(mesg)
  
  !Calculate Building Width and Street Width Based on BEP formulation
  if(lb_urb.gt.lp_urb)THEN
   BW=2.*hgt_urb*lp_urb/(lb_urb-lp_urb)
   SW=2.*hgt_urb*lp_urb*((frc_urb/lp_urb)-1.)/(lb_urb-lp_urb)
   !write(mesg,*) 'Building Width',BW
-  !call wrf_message(mesg)
+  !WRITE_MESSAGE(mesg)
   !write(mesg,*) 'Street Width',SW
-  !call wrf_message(mesg)
+  !WRITE_MESSAGE(mesg)
  elseif (SW.lt.0.0.or.BW.lt.0.0)then
   BW=BUILDING_WIDTH(1)
   SW=STREET_WIDTH(1)
@@ -930,7 +939,7 @@ MODULE module_sf_urban
      
       if(zo_check.eq.1)THEN
         write(mesg,*) 'Roughness Length NUDAPT',Z0C
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
       end if
 
       lambda_fr  = stdh_urb/(SW + BW)
@@ -962,11 +971,11 @@ MODULE module_sf_urban
 
     if(zo_check.eq.1)THEN
       write(mesg,*) 'Roof Roughness Length NUDAPT',Z0R
-      call wrf_message(mesg)
+      WRITE_MESSAGE(mesg)
       write(mesg,*) 'Sky View Factor NUDAPT',SVF
-      call wrf_message(mesg)
+      WRITE_MESSAGE(mesg)
       write(mesg,*) 'normalized Height NUDAPT', HGT
-      call wrf_message(mesg)
+      WRITE_MESSAGE(mesg)
     end if
 
 
@@ -989,8 +998,7 @@ MODULE module_sf_urban
    if(alhoption==1) ALH = ALH*alhdiuprf(tloc2)*alhseason(Kalh)
 
    IF( ZDC+Z0C+2. >= ZA) THEN
-    CALL wrf_error_fatal ("ZDC + Z0C + 2m is larger than the 1st WRF level "// &
-                           "Stop in subroutine urban - change ZDC and Z0C" ) 
+    FATAL_ERROR("ZDC + Z0C + 2m is larger than the 1st WRF level - Stop in subroutine urban - change ZDC and Z0C" ) 
    END IF
 
    IF(.NOT.LSOLAR) THEN
@@ -1373,7 +1381,7 @@ MODULE module_sf_urban
      END DO
        ! Update temperature in soil layer
        CALL SHFLX (SSOILR,TGRL,SMR,SMCMAX,NGR,TGRP,DELT,YY,ZZ1,ZSOILR,       &
-                  TRLEND,ZBOT,SMCWLT,DF1,QUARTZ,CSOIL,CAPR)     
+                  TRLEND,ZBOT,SMCWLT,DF1,QUARTZ,CSOIL,CAPR)
    FLXTHGR=HGR/RHO/CP/100.
    FLXHUMGR=ELEGR/RHO/EL/100.
 ELSE
@@ -2223,7 +2231,7 @@ ENDIF
          IOSTAT=IOSTATUS)
 
    IF (IOSTATUS > 0) THEN
-   CALL wrf_error_fatal('ERROR OPEN URBPARM.TBL')
+   FATAL_ERROR('ERROR OPEN URBPARM.TBL')
    ENDIF
 
    READLOOP : do 
@@ -2240,310 +2248,310 @@ ENDIF
          read(string(indx+1:),*) icate
          IF (.not. ALLOCATED(ZR_TBL)) then
             ALLOCATE( ZR_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating ZR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating ZR_TBL in urban_param_init')
             ALLOCATE( SIGMA_ZED_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0)CALL wrf_error_fatal('Error allocating SIGMA_ZED_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating SIGMA_ZED_TBL in urban_param_init')
             ALLOCATE( Z0C_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating Z0C_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating Z0C_TBL in urban_param_init')
             ALLOCATE( Z0HC_TBL(ICATE), stat=allocate_status ) 
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating Z0HC_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating Z0HC_TBL in urban_param_init')
             ALLOCATE( ZDC_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating ZDC_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating ZDC_TBL in urban_param_init')
             ALLOCATE( SVF_TBL(ICATE), stat=allocate_status ) 
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating SVF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating SVF_TBL in urban_param_init')
             ALLOCATE( R_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating R_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating R_TBL in urban_param_init')
             ALLOCATE( RW_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating RW_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating RW_TBL in urban_param_init')
             ALLOCATE( HGT_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating HGT_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating HGT_TBL in urban_param_init')
             ALLOCATE( AH_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating AH_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating AH_TBL in urban_param_init')
             ALLOCATE( ALH_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating ALH_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating ALH_TBL in urban_param_init')
             ALLOCATE( BETR_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating BETR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating BETR_TBL in urban_param_init')
             ALLOCATE( BETB_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating BETB_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating BETB_TBL in urban_param_init')
             ALLOCATE( BETG_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating BETG_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating BETG_TBL in urban_param_init')
             ALLOCATE( CAPR_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating CAPR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating CAPR_TBL in urban_param_init')
             ALLOCATE( CAPB_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating CAPB_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating CAPB_TBL in urban_param_init')
             ALLOCATE( CAPG_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating CAPG_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating CAPG_TBL in urban_param_init')
             ALLOCATE( AKSR_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating AKSR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating AKSR_TBL in urban_param_init')
             ALLOCATE( AKSB_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating AKSB_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating AKSB_TBL in urban_param_init')
             ALLOCATE( AKSG_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating AKSG_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating AKSG_TBL in urban_param_init')
             ALLOCATE( ALBR_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating ALBR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating ALBR_TBL in urban_param_init')
             ALLOCATE( ALBB_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating ALBB_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating ALBB_TBL in urban_param_init')
             ALLOCATE( ALBG_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating ALBG_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating ALBG_TBL in urban_param_init')
             ALLOCATE( EPSR_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating EPSR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating EPSR_TBL in urban_param_init')
             ALLOCATE( EPSB_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating EPSB_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating EPSB_TBL in urban_param_init')
             ALLOCATE( EPSG_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating EPSG_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating EPSG_TBL in urban_param_init')
             ALLOCATE( Z0R_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating Z0R_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating Z0R_TBL in urban_param_init')
             ALLOCATE( Z0B_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating Z0B_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating Z0B_TBL in urban_param_init')
             ALLOCATE( Z0G_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating Z0G_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating Z0G_TBL in urban_param_init')
             ALLOCATE( AKANDA_URBAN_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating AKANDA_URBAN_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating AKANDA_URBAN_TBL in urban_param_init')
             ALLOCATE( Z0HB_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating Z0HB_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating Z0HB_TBL in urban_param_init')
             ALLOCATE( Z0HG_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating Z0HG_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating Z0HG_TBL in urban_param_init')
             ALLOCATE( TRLEND_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TRLEND_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TRLEND_TBL in urban_param_init')
             ALLOCATE( TBLEND_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TBLEND_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TBLEND_TBL in urban_param_init')
             ALLOCATE( TGLEND_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TGLEND_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TGLEND_TBL in urban_param_init')
             ALLOCATE( FRC_URB_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating FRC_URB_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating FRC_URB_TBL in urban_param_init')
             ! ALLOCATE( ROOF_WIDTH(ICATE), stat=allocate_status )
-            ! if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating ROOF_WIDTH in urban_param_init')
+            ! if(allocate_status /= 0) FATAL_ERROR('Error allocating ROOF_WIDTH in urban_param_init')
             ! ALLOCATE( ROAD_WIDTH(ICATE), stat=allocate_status )
-            ! if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating ROAD_WIDTH in urban_param_init')
+            ! if(allocate_status /= 0) FATAL_ERROR('Error allocating ROAD_WIDTH in urban_param_init')
             !for TEB
             ALLOCATE( TEB_ALB_ROOF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_ALB_ROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_ALB_ROOF_TBL in urban_param_init')
             ALLOCATE( TEB_ALB_ROAD_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_ALB_ROAD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_ALB_ROAD_TBL in urban_param_init')
             ALLOCATE( TEB_ALB_WALL_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_ALB_WALL_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_ALB_WALL_TBL in urban_param_init')
             ALLOCATE( TEB_EMIS_ROOF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_EMIS_ROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_EMIS_ROOF_TBL in urban_param_init')
             ALLOCATE( TEB_EMIS_ROAD_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_EMIS_ROAD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_EMIS_ROAD_TBL in urban_param_init')
             ALLOCATE( TEB_EMIS_WALL_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_EMIS_WALL_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_EMIS_WALL_TBL in urban_param_init')
             ALLOCATE( TEB_BLD_HEIGHT_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_BLD_HEIGHT_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_BLD_HEIGHT_TBL in urban_param_init')
             ALLOCATE( TEB_FRAC_BLD_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_FRAC_BLD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_FRAC_BLD_TBL in urban_param_init')
             ALLOCATE( TEB_WALL_O_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_WALL_O_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_WALL_O_TBL in urban_param_init')
             ALLOCATE( TEB_H_TRAFFIC_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_H_TRAFFIC_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_H_TRAFFIC_TBL in urban_param_init')
             ALLOCATE( TEB_LE_TRAFFIC_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_LE_TRAFFIC_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_LE_TRAFFIC_TBL in urban_param_init')
             ALLOCATE( TEB_H_INDUSTRY_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_H_INDUSTRY_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_H_INDUSTRY_TBL in urban_param_init')
             ALLOCATE( TEB_LE_INDUSTRY_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_LE_INDUSTRY_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_LE_INDUSTRY_TBL in urban_param_init')
             ALLOCATE( TEB_Z0_TOWN_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_Z0_TOWN_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_Z0_TOWN_TBL in urban_param_init')
             ALLOCATE( TEB_OPT_ZOH_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_OPT_ZOH_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_OPT_ZOH_TBL in urban_param_init')
             ALLOCATE( TEB_SNOW_SCH_ROOF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_SNOW_SCH_ROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_SNOW_SCH_ROOF_TBL in urban_param_init')
             ALLOCATE( TEB_SNOW_SCH_ROAD_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_SNOW_SCH_ROAD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_SNOW_SCH_ROAD_TBL in urban_param_init')
             ALLOCATE( TEB_TI_BLD_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_TI_BLD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_TI_BLD_TBL in urban_param_init')
             ALLOCATE( TEB_T_CANYON_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_T_CANYON_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_T_CANYON_TBL in urban_param_init')
             ALLOCATE( TEB_Q_CANYON_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_Q_CANYON_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_Q_CANYON_TBL in urban_param_init')
             ALLOCATE( TEB_T_WIN1_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_T_WIN1_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_T_WIN1_TBL in urban_param_init')
             ALLOCATE( TEB_T_WIN2_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_T_WIN2_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_T_WIN2_TBL in urban_param_init')
             ALLOCATE( TEB_QI_BLD_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_QI_BLD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_QI_BLD_TBL in urban_param_init')
             ALLOCATE( TEB_WS_ROOF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_WS_ROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_WS_ROOF_TBL in urban_param_init')
             ALLOCATE( TEB_WS_ROAD_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_WS_ROAD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_WS_ROAD_TBL in urban_param_init')
             ALLOCATE( TEB_WSNOW_ROOF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_WSNOW_ROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_WSNOW_ROOF_TBL in urban_param_init')
             ALLOCATE( TEB_TSNOW_ROOF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_TSNOW_ROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_TSNOW_ROOF_TBL in urban_param_init')
             ALLOCATE( TEB_RSNOW_ROOF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_RSNOW_ROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_RSNOW_ROOF_TBL in urban_param_init')
             ALLOCATE( TEB_ASNOW_ROOF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_ASNOW_ROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_ASNOW_ROOF_TBL in urban_param_init')
             ALLOCATE( TEB_ESNOW_ROOF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_ESNOW_ROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_ESNOW_ROOF_TBL in urban_param_init')
             ALLOCATE( TEB_TSSNOW_ROOF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_TSSNOW_ROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_TSSNOW_ROOF_TBL in urban_param_init')
             ALLOCATE( TEB_WSNOW_ROAD_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_WSNOW_ROAD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_WSNOW_ROAD_TBL in urban_param_init')
             ALLOCATE( TEB_TSNOW_ROAD_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_TSNOW_ROAD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_TSNOW_ROAD_TBL in urban_param_init')
             ALLOCATE( TEB_RSNOW_ROAD_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_RSNOW_ROAD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_RSNOW_ROAD_TBL in urban_param_init')
             ALLOCATE( TEB_ASNOW_ROAD_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_ASNOW_ROAD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_ASNOW_ROAD_TBL in urban_param_init')
             ALLOCATE( TEB_ESNOW_ROAD_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_ESNOW_ROAD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_ESNOW_ROAD_TBL in urban_param_init')
             ALLOCATE( TEB_TSSNOW_ROAD_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_TSSNOW_ROAD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_TSSNOW_ROAD_TBL in urban_param_init')
             ALLOCATE( TEB_SOLAR_PANEL_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_SOLAR_PANEL_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_SOLAR_PANEL_TBL in urban_param_init')
             ALLOCATE( TEB_LGARDEN_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_LGARDEN_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_LGARDEN_TBL in urban_param_init')
             ALLOCATE( TEB_GREENROOF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_GREENROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_GREENROOF_TBL in urban_param_init')
             ALLOCATE( TEB_HROAD_DIR_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_HROAD_DIR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_HROAD_DIR_TBL in urban_param_init')
             ALLOCATE( TEB_ZROAD_DIR_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_ZROAD_DIR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_ZROAD_DIR_TBL in urban_param_init')
             ALLOCATE( TEB_WALL_OPT_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_WALL_OPT_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_WALL_OPT_TBL in urban_param_init')
             ALLOCATE( TEB_ZGARDEN_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_ZGARDEN_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_ZGARDEN_TBL in urban_param_init')
             ALLOCATE( TEB_FRAC_GR_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_FRAC_GR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_FRAC_GR_TBL in urban_param_init')
             ALLOCATE( TEB_COOL_COIL_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_COOL_COIL_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_COOL_COIL_TBL in urban_param_init')
             ALLOCATE( TEB_HEAT_COIL_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_HEAT_COIL_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_HEAT_COIL_TBL in urban_param_init')
             ALLOCATE( TEB_F_WATER_COND_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_F_WATER_COND_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_F_WATER_COND_TBL in urban_param_init')
             ALLOCATE( TEB_HNATVENT_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_HNATVENT_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_HNATVENT_TBL in urban_param_init')
             ALLOCATE( TEB_ZNATVENT_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_ZNATVENT_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_ZNATVENT_TBL in urban_param_init')
             ALLOCATE( TEB_F_WASTE_CAN_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_F_WASTE_CAN_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_F_WASTE_CAN_TBL in urban_param_init')
             ALLOCATE( TEB_QIN_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_QIN_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_QIN_TBL in urban_param_init')
             ALLOCATE( TEB_QIN_FRAD_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_QIN_FRAD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_QIN_FRAD_TBL in urban_param_init')
             ALLOCATE( TEB_QIN_FLAT_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_QIN_FLAT_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_QIN_FLAT_TBL in urban_param_init')
             ALLOCATE( TEB_GR_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_GR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_GR_TBL in urban_param_init')
             ALLOCATE( TEB_EFF_HEAT_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_EFF_HEAT_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_EFF_HEAT_TBL in urban_param_init')
             ALLOCATE( TEB_INF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_INF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_INF_TBL in urban_param_init')
             ALLOCATE( TEB_TCOOL_TARGET_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_TCOOL_TARGET_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_TCOOL_TARGET_TBL in urban_param_init')
             ALLOCATE( TEB_THEAT_TARGET_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_THEAT_TARGET_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_THEAT_TARGET_TBL in urban_param_init')
             ALLOCATE( TEB_HR_TARGET_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_HR_TARGET_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_HR_TARGET_TBL in urban_param_init')
             ALLOCATE( TEB_V_VENT_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_V_VENT_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_V_VENT_TBL in urban_param_init')
             ALLOCATE( TEB_CAP_SYS_HEAT_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_CAP_SYS_HEAT_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_CAP_SYS_HEAT_TBL in urban_param_init')
             ALLOCATE( TEB_CAP_SYS_RAT_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_CAP_SYS_RAT_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_CAP_SYS_RAT_TBL in urban_param_init')
             ALLOCATE( TEB_T_ADP_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_T_ADP_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_T_ADP_TBL in urban_param_init')
             ALLOCATE( TEB_M_SYS_RAT_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_M_SYS_RAT_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_M_SYS_RAT_TBL in urban_param_init')
             ALLOCATE( TEB_COP_RAT_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_COP_RAT_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_COP_RAT_TBL in urban_param_init')
             ALLOCATE( TEB_SHGC_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_SHGC_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_SHGC_TBL in urban_param_init')
             ALLOCATE( TEB_SHGC_SH_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_SHGC_SH_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_SHGC_SH_TBL in urban_param_init')
             ALLOCATE( TEB_U_WIN_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_U_WIN_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_U_WIN_TBL in urban_param_init')
             ALLOCATE( TEB_LSHADE_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_LSHADE_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_LSHADE_TBL in urban_param_init')
             ALLOCATE( TEB_ZSHADE_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_ZSHADE_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_ZSHADE_TBL in urban_param_init')
             ALLOCATE( TEB_CBEM_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_CBEM_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_CBEM_TBL in urban_param_init')
             ALLOCATE( TEB_FLOOR_HEIGHT_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_FLOOR_HEIGHT_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_FLOOR_HEIGHT_TBL in urban_param_init')
             ALLOCATE( TEB_CH_BEM_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_CH_BEM_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_CH_BEM_TBL in urban_param_init')
             ALLOCATE( TEB_ROUGH_ROOF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_ROUGH_ROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_ROUGH_ROOF_TBL in urban_param_init')
             ALLOCATE( TEB_ROUGH_WALL_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_ROUGH_WALL_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_ROUGH_WALL_TBL in urban_param_init')
             ALLOCATE( TEB_PAR_RD_IRRIG_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_PAR_RD_IRRIG_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_PAR_RD_IRRIG_TBL in urban_param_init')
             ALLOCATE( TEB_RD_START_MONTH_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_RD_START_MONTH_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_RD_START_MONTH_TBL in urban_param_init')
             ALLOCATE( TEB_RD_END_MONTH_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_RD_END_MONTH_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_RD_END_MONTH_TBL in urban_param_init')
             ALLOCATE( TEB_RD_START_HOUR_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_RD_START_HOUR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_RD_START_HOUR_TBL in urban_param_init')
             ALLOCATE( TEB_RD_END_HOUR_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_RD_END_HOUR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_RD_END_HOUR_TBL in urban_param_init')
             ALLOCATE( TEB_RD_24H_IRRIG_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_RD_24H_IRRIG_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_RD_24H_IRRIG_TBL in urban_param_init')
             ALLOCATE( TEB_EMIS_PANEL_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_EMIS_PANEL_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_EMIS_PANEL_TBL in urban_param_init')
             ALLOCATE( TEB_ALB_PANEL_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_ALB_PANEL_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_ALB_PANEL_TBL in urban_param_init')
             ALLOCATE( TEB_EFF_PANEL_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_EFF_PANEL_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_EFF_PANEL_TBL in urban_param_init')
             ALLOCATE( TEB_FRAC_PANEL_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_FRAC_PANEL_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_FRAC_PANEL_TBL in urban_param_init')
             ALLOCATE( TEB_RESIDENTIAL_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_RESIDENTIAL_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_RESIDENTIAL_TBL in urban_param_init')
             ALLOCATE( TEB_DT_RES_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_DT_RES_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_DT_RES_TBL in urban_param_init')
             ALLOCATE( TEB_DT_OFF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_DT_OFF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_DT_OFF_TBL in urban_param_init')
 
             ALLOCATE( TEB_T_FLOOR_TBL(teb_num_floor_layers), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_T_FLOOR in urban_param_init')        
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_T_FLOOR in urban_param_init')        
             ALLOCATE( TEB_T_MASS_TBL(teb_num_floor_layers), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_T_MASS in urban_param_init')        
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_T_MASS in urban_param_init')        
 
             ALLOCATE( TEB_T_ROAD_TBL(teb_num_road_layers), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_T_ROAD_TBL in urban_param_init')        
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_T_ROAD_TBL in urban_param_init')        
             ALLOCATE( TEB_T_ROOF_TBL(teb_num_roof_layers), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_T_ROOF_TBL in urban_param_init')        
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_T_ROOF_TBL in urban_param_init')        
             ALLOCATE( TEB_T_WALL_A_TBL(teb_num_wall_layers), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_T_WALL_A_TBL in urban_param_init')        
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_T_WALL_A_TBL in urban_param_init')        
             ALLOCATE( TEB_T_WALL_B_TBL(teb_num_wall_layers), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_T_WALL_B_TBL in urban_param_init')        
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_T_WALL_B_TBL in urban_param_init')        
             ! ROOF
             ALLOCATE( teb_numroof_tbl(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating teb_numroof_tbl in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating teb_numroof_tbl in urban_param_init')
             ALLOCATE( TEB_HC_ROOF_TBL(teb_num_roof_layers , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_HC_ROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_HC_ROOF_TBL in urban_param_init')
             ALLOCATE( TEB_TC_ROOF_TBL(teb_num_roof_layers , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_TC_ROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_TC_ROOF_TBL in urban_param_init')
             ALLOCATE( TEB_D_ROOF_TBL(teb_num_roof_layers , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_D_ROOF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_D_ROOF_TBL in urban_param_init')
             ! ROAD
             ALLOCATE( teb_numroad_tbl(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating teb_numroad_tbl in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating teb_numroad_tbl in urban_param_init')
             ALLOCATE( TEB_HC_ROAD_TBL(teb_num_road_layers , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_HC_ROAD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_HC_ROAD_TBL in urban_param_init')
             ALLOCATE( TEB_TC_ROAD_TBL(teb_num_road_layers , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_TC_ROAD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_TC_ROAD_TBL in urban_param_init')
             ALLOCATE( TEB_D_ROAD_TBL(teb_num_road_layers , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_D_ROAD_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_D_ROAD_TBL in urban_param_init')
             ! WALL
             ALLOCATE( teb_numwall_tbl(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating teb_numwall_tbl in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating teb_numwall_tbl in urban_param_init')
             ALLOCATE( TEB_HC_WALL_TBL(teb_num_wall_layers , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_HC_WALL_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_HC_WALL_TBL in urban_param_init')
             ALLOCATE( TEB_TC_WALL_TBL(teb_num_wall_layers , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_TC_WALL_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_TC_WALL_TBL in urban_param_init')
             ALLOCATE( TEB_D_WALL_TBL(teb_num_wall_layers , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_D_WALL_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_D_WALL_TBL in urban_param_init')
             ! FLOOR
             ALLOCATE( teb_numfloor_tbl(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating teb_numfloor_tbl in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating teb_numfloor_tbl in urban_param_init')
             ALLOCATE( TEB_HC_FLOOR_TBL(teb_num_floor_layers , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_HC_FLOOR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_HC_FLOOR_TBL in urban_param_init')
             ALLOCATE( TEB_TC_FLOOR_TBL(teb_num_floor_layers , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_TC_FLOOR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_TC_FLOOR_TBL in urban_param_init')
             ALLOCATE( TEB_D_FLOOR_TBL(teb_num_floor_layers , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TEB_D_FLOOR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TEB_D_FLOOR_TBL in urban_param_init')
 
             TEB_EMIS_ROOF_TBL      = UNINIT_REAL
             TEB_EMIS_ROAD_TBL      = UNINIT_REAL
@@ -2654,49 +2662,50 @@ ENDIF
             TEB_TC_FLOOR_TBL = UNINIT_REAL
             TEB_D_FLOOR_TBL = UNINIT_REAL
             !end TEB
+            
             !for BEP
             ALLOCATE( NUMDIR_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating NUMDIR_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating NUMDIR_TBL in urban_param_init')
             ALLOCATE( STREET_DIRECTION_TBL(MAXDIRS , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating STREET_DIRECTION_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating STREET_DIRECTION_TBL in urban_param_init')
             ALLOCATE( STREET_WIDTH_TBL(MAXDIRS , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating STREET_WIDTH_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating STREET_WIDTH_TBL in urban_param_init')
             ALLOCATE( BUILDING_WIDTH_TBL(MAXDIRS , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating BUILDING_WIDTH_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating BUILDING_WIDTH_TBL in urban_param_init')
             ALLOCATE( NUMHGT_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating NUMHGT_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating NUMHGT_TBL in urban_param_init')
             ALLOCATE( HEIGHT_BIN_TBL(MAXHGTS , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating HEIGHT_BIN_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating HEIGHT_BIN_TBL in urban_param_init')
             ALLOCATE( HPERCENT_BIN_TBL(MAXHGTS , ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating HPERCENT_BIN_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating HPERCENT_BIN_TBL in urban_param_init')
             ALLOCATE( COP_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating COP_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating COP_TBL in urban_param_init')
             ALLOCATE( BLDAC_FRC_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating BLDAC_FRC_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating BLDAC_FRC_TBL in urban_param_init')
             ALLOCATE( COOLED_FRC_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating COOLED_FRC_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating COOLED_FRC_TBL in urban_param_init')
             ALLOCATE( PWIN_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating PWIN_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating PWIN_TBL in urban_param_init')
             ALLOCATE( BETA_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating BETA_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating BETA_TBL in urban_param_init')
             ALLOCATE( SW_COND_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating SW_COND_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating SW_COND_TBL in urban_param_init')
             ALLOCATE( TIME_ON_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TIME_ON_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TIME_ON_TBL in urban_param_init')
             ALLOCATE( TIME_OFF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TIME_OFF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TIME_OFF_TBL in urban_param_init')
             ALLOCATE( TARGTEMP_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TARGTEMP_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TARGTEMP_TBL in urban_param_init')
             ALLOCATE( GAPTEMP_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating GAPTEMP_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating GAPTEMP_TBL in urban_param_init')
             ALLOCATE( TARGHUM_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating TARGHUM_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating TARGHUM_TBL in urban_param_init')
             ALLOCATE( GAPHUM_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating GAPHUM_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating GAPHUM_TBL in urban_param_init')
             ALLOCATE( PERFLO_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating PERFLO_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating PERFLO_TBL in urban_param_init')
             ALLOCATE( HSESF_TBL(ICATE), stat=allocate_status )
-            if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating HSESF_TBL in urban_param_init')
+            if(allocate_status /= 0) FATAL_ERROR('Error allocating HSESF_TBL in urban_param_init')
          endif
          numdir_tbl = 0
          street_direction_tbl = -1.E36
@@ -2720,12 +2729,12 @@ ENDIF
          read(string(indx+1:),*) sigma_zed_tbl(1:icate)
       else if (name == "ROOF_WIDTH") then
          ALLOCATE( ROOF_WIDTH(ICATE), stat=allocate_status )
-         if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating ROOF_WIDTH in urban_param_init')
+         if(allocate_status /= 0) FATAL_ERROR('Error allocating ROOF_WIDTH in urban_param_init')
 
          read(string(indx+1:),*) roof_width(1:icate)
       else if (name == "ROAD_WIDTH") then
          ALLOCATE( ROAD_WIDTH(ICATE), stat=allocate_status )
-         if(allocate_status /= 0) CALL wrf_error_fatal('Error allocating ROAD_WIDTH in urban_param_init')
+         if(allocate_status /= 0) FATAL_ERROR('Error allocating ROAD_WIDTH in urban_param_init')
          read(string(indx+1:),*) road_width(1:icate)
       else if (name == "AH") then
          read(string(indx+1:),*) ah_tbl(1:icate)
@@ -2862,7 +2871,7 @@ ENDIF
          if ( pctsum /= 100.) then
             write (*,'(//,"Building height percentages for category ", I2, " must sum to 100.0")') k
             write (*,'("Currently, they sum to ", F6.2,/)') pctsum
-            CALL wrf_error_fatal('pctsum is not equal to 100.') 
+            FATAL_ERROR('pctsum is not equal to 100.') 
          endif
       else if ( name == "Z0R") then
          read(string(indx+1:),*) Z0R_tbl(1:icate)
@@ -3160,7 +3169,7 @@ ENDIF
 ! END: TEB
 
       else
-         CALL wrf_error_fatal('URBPARM.TBL: Unrecognized NAME = "'//trim(name)//'" in Subr URBAN_PARAM_INIT')
+         FATAL_ERROR('URBPARM.TBL: Unrecognized NAME = "'//trim(name)//'" in Subr URBAN_PARAM_INIT')
       endif
    enddo READLOOP
 
@@ -3612,7 +3621,8 @@ ENDIF
                IF (HGT_URB2D(I,J)>0.) THEN
                   CONTINUE
                ELSE
-                  CALL wrf_debug(100, 'USING DEFAULT URBAN MORPHOLOGY')
+                  WRITE(mesg,*) 'USING DEFAULT URBAN MORPHOLOGY'
+                  WRITE_MESSAGE(mesg)
                   LP_URB2D(I,J)=0.
                   LB_URB2D(I,J)=0.
                   HGT_URB2D(I,J)=0.
@@ -3632,9 +3642,9 @@ ENDIF
                   CONTINUE
                 ELSE
                   WRITE(mesg,*) 'WARNING, FRC_URB2D = 0 BUT IVGTYP IS URBAN'
-                  call wrf_message(mesg)
+                  WRITE_MESSAGE(mesg)
                   WRITE(mesg,*) 'WARNING, THE URBAN FRACTION WILL BE READ FROM URBPARM.TBL'
-                  call wrf_message(mesg)
+                  WRITE_MESSAGE(mesg)
                   FRC_URB2D(I,J) = FRC_URB_TBL(UTYPE_URB)
                 ENDIF           
                SWITCH_URB=1
@@ -3646,7 +3656,8 @@ ENDIF
                IF (HGT_URB2D(I,J)>0.) THEN
                   CONTINUE
                ELSE
-                  CALL wrf_debug(100, 'USING DEFAULT URBAN MORPHOLOGY')
+                  WRITE(mesg,*) 'USING DEFAULT URBAN MORPHOLOGY'
+                  WRITE_MESSAGE(mesg)
                   LP_URB2D(I,J)=0.
                   LB_URB2D(I,J)=0.
                   HGT_URB2D(I,J)=0.
@@ -3666,9 +3677,9 @@ ENDIF
                   CONTINUE
                 ELSE
                   WRITE(mesg,*) 'WARNING, FRC_URB2D = 0 BUT IVGTYP IS URBAN'
-                  call wrf_message(mesg)
+                  WRITE_MESSAGE(mesg)
                   WRITE(mesg,*) 'WARNING, THE URBAN FRACTION WILL BE READ FROM URBPARM.TBL'
-                  call wrf_message(mesg)
+                  WRITE_MESSAGE(mesg)
                   FRC_URB2D(I,J) = FRC_URB_TBL(UTYPE_URB)
                 ENDIF         
               SWITCH_URB=1
@@ -3680,7 +3691,8 @@ ENDIF
               IF (HGT_URB2D(I,J)>0.) THEN
                   CONTINUE
                ELSE
-                  CALL wrf_debug(100, 'USING DEFAULT URBAN MORPHOLOGY')
+                  WRITE(mesg,*) 'USING DEFAULT URBAN MORPHOLOGY'
+                  WRITE_MESSAGE(mesg)
                   LP_URB2D(I,J)=0.
                   LB_URB2D(I,J)=0.
                   HGT_URB2D(I,J)=0.
@@ -3700,9 +3712,9 @@ ENDIF
                   CONTINUE
                 ELSE
                   WRITE(mesg,*) 'WARNING, FRC_URB2D = 0 BUT IVGTYP IS URBAN'
-                  call wrf_message(mesg)
+                  WRITE_MESSAGE(mesg)
                   WRITE(mesg,*) 'WARNING, THE URBAN FRACTION WILL BE READ FROM URBPARM.TBL'
-                  call wrf_message(mesg)
+                  WRITE_MESSAGE(mesg)
                   FRC_URB2D(I,J) = FRC_URB_TBL(UTYPE_URB)
                 ENDIF
               SWITCH_URB=1
@@ -3714,7 +3726,8 @@ ENDIF
               IF (HGT_URB2D(I,J)>0.) THEN
                   CONTINUE
                ELSE
-                  CALL wrf_debug(100, 'USING DEFAULT URBAN MORPHOLOGY')
+                  WRITE(mesg,*) 'USING DEFAULT URBAN MORPHOLOGY'
+                  WRITE_MESSAGE(mesg)
                   LP_URB2D(I,J)=0.
                   LB_URB2D(I,J)=0.
                   HGT_URB2D(I,J)=0.
@@ -3734,9 +3747,9 @@ ENDIF
                   CONTINUE
                 ELSE
                   WRITE(mesg,*) 'WARNING, FRC_URB2D = 0 BUT IVGTYP IS URBAN'
-                  call wrf_message(mesg)
+                  WRITE_MESSAGE(mesg)
                   WRITE(mesg,*) 'WARNING, THE URBAN FRACTION WILL BE READ FROM URBPARM.TBL'
-                  call wrf_message(mesg)
+                  WRITE_MESSAGE(mesg)
                   FRC_URB2D(I,J) = FRC_URB_TBL(UTYPE_URB)
                 ENDIF
                SWITCH_URB=1
@@ -3957,51 +3970,51 @@ ENDIF
         write(mesg,*) 'Sample of Urban settings'
         call wrf_message(mesg)
         write(mesg,*) 'TSURFACE0_URB',TSURFACE0_URB(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'TDEEP0_URB', TDEEP0_URB(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'IVGTYP',IVGTYP(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'TR_URB2D',TR_URB2D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'TB_URB2D',TB_URB2D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'TG_URB2D',TG_URB2D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'TC_URB2D',TC_URB2D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'QC_URB2D',QC_URB2D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'XXXR_URB2D',XXXR_URB2D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'SH_URB2D',SH_URB2D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'LH_URB2D',LH_URB2D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'G_URB2D',G_URB2D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'RN_URB2D',RN_URB2D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'TS_URB2D',TS_URB2D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'LF_AC_URB3D', LF_AC_URB3D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'SF_AC_URB3D', SF_AC_URB3D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'CM_AC_URB3D', CM_AC_URB3D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'SFVENT_URB3D', SFVENT_URB3D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'LFVENT_URB3D', LFVENT_URB3D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'FRC_URB2D', FRC_URB2D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'UTYPE_URB2D', UTYPE_URB2D(I,J)
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'I',I,'J',J
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         write(mesg,*) 'num_urban_hi', num_urban_hi
-        call wrf_message(mesg)
+        WRITE_MESSAGE(mesg)
         CHECK = 1
        END IF
        END IF

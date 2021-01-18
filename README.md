@@ -1,5 +1,6 @@
 <!-- omit in toc -->
 # WRF-TEB software
+[![Build status Azure Pipelines](https://dev.azure.com/WRF-CMake/wrf/_apis/build/status/WRF%20(full)?branchName=wrf-cmake)](https://dev.azure.com/WRF-CMake/wrf/_build/latest?definitionId=5&branchName=wrf-cmake) [![DOI](https://joss.theoj.org/papers/10.21105/joss.01468/status.svg)](https://doi.org/10.21105/joss.01468) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3403342.svg)](https://doi.org/10.5281/zenodo.3403342)
 
 WRF-TEB ([Meyer et al., 2020a](https://doi.org/10.1029/2019MS001961)) couples the single layer Town Energy Balance (TEB) model ([Masson, 2000](https://doi.org/10.1023/A:1002463829265), and subsequent papers) model, software ([Meyer et al., 2020b](https://doi.org/10.21105/joss.02008)), to the Weather Research and Forecasting (WRF; [Skamarock et al., 2019](https://doi.org/10.5065/1dfh-6p97)). The WRF-TEB software is available for download from version 4.1.5 at https://github.com/teb-model/wrf-teb.
 
